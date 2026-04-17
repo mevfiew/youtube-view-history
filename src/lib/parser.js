@@ -141,6 +141,9 @@ function extractFromShortsLockupViewModel(node) {
   const title = String(node.overlayMetadata?.primaryText?.content || '')
     || String(node.accessibilityText || '').split(/,|–/)[0].trim();
   const viewCountText = String(node.overlayMetadata?.secondaryText?.content || '');
+  // Shorts renderers ship frame-capture URLs (e.g. frame0.jpg) that are unsigned
+  // and unreliable from the extension origin. Always use the stable pattern
+  // i.ytimg.com/vi/{id}/hqdefault.jpg which always resolves.
   return {
     videoId,
     kind: 'short',
@@ -148,7 +151,7 @@ function extractFromShortsLockupViewModel(node) {
     channelName: '',
     channelHandle: '',
     channelId: '',
-    thumbnailUrl: getThumbnailFromList(node.thumbnailViewModel),
+    thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
     durationText: '',
     durationSec: 0,
     viewCountText,

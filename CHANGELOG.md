@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] — 2026-04-17
+
+### Fixed
+- Shorts thumbnails from home/search/watch-next now render correctly. Renderer-supplied `frame0.jpg` URLs are unsigned and fail to load from the extension origin; always use the stable `i.ytimg.com/vi/{id}/hqdefault.jpg` pattern instead.
+
+### Changed
+- Shorts and regular videos now live in separate views. `All` / `Home` / `Search` / `Channel` / `Watch-next` filters show only regular videos. `Shorts` pill shows only Shorts. No more mixed-format tiles in one grid.
+
 ## [1.0.2] — 2026-04-17
 
 ### Fixed
@@ -27,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supports four renderer shapes observed in real YouTube responses: `videoRenderer`, `gridVideoRenderer`, `lockupViewModel` (new watch-next shape), and `shortsLockupViewModel`.
 - MV3 manifest with zero outbound network requests and no remote code.
 
+[1.0.3]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.3
 [1.0.2]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.2
 [1.0.1]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.1
 [1.0.0]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.0

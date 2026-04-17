@@ -28,8 +28,10 @@ function matchesSearch(entry, query) {
 }
 
 function matchesFilter(entry, filter) {
-  if (filter === 'all') return true;
   if (filter === 'shorts') return entry.kind === 'short';
+  // Every non-shorts filter shows videos only. Shorts live in their own pill.
+  if (entry.kind === 'short') return false;
+  if (filter === 'all') return true;
   return entry.source === filter;
 }
 
