@@ -1,0 +1,11 @@
+.DS_Store
+*.zip
+node_modules/
+.vscode/
+.idea/
+
+# Store submission artifacts — local only
+store-assets/
+
+# Internal planning docs — local only
+docs/superpowers/
