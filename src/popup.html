@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 520px;
+    max-height: 620px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #f1f1f1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    background: #212121;
+    border-bottom: 1px solid #303030;
+    padding: 12px 14px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .brand h1 {
+    font-size: 15px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stats { font-size: 10px; color: #aaa; letter-spacing: 0.2px; }
+
+  .header-actions { display: flex; gap: 5px; align-items: center; }
+  .icon-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 6px;
+    border: 1px solid #303030; background: #272727; cursor: pointer;
+    color: #f1f1f1; font-size: 13px; transition: all 0.15s;
+  }
+  .icon-btn:hover { background: #3a3a3a; }
+  .icon-btn.danger:hover { background: #3a2020; border-color: #FF0000; color: #FF4444; }
+
+  .controls { display: flex; gap: 6px; }
+  .search-bar {
+    flex: 1; padding: 7px 10px;
+    border: 1px solid #303030; border-radius: 8px;
+    font-size: 12px; background: #121212; color: #f1f1f1; outline: none;
+  }
+  .search-bar:focus { border-color: #606060; background: #1a1a1a; }
+
+  .filter-pills {
+    display: flex; gap: 4px; align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-top: 6px;
+    padding-bottom: 2px;
+  }
+  .filter-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    font-size: 11px; padding: 5px 10px;
+    border-radius: 16px; border: 1px solid #303030;
+    background: #272727; cursor: pointer;
+    font-weight: 500; color: #aaa;
+    transition: all 0.15s; white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .pill:hover { border-color: #606060; color: #f1f1f1; }
+  .pill.active { background: #f1f1f1; border-color: #f1f1f1; color: #0f0f0f; }
+
+  .content { padding: 6px; overflow-y: auto; flex: 1; min-height: 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+
+  .grid-item {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden; border-radius: 6px;
+    cursor: pointer; background: #111;
+    text-decoration: none;
+    color: inherit;
+  }
+  .grid-item.short {
+    aspect-ratio: 9 / 16;
+  }
+  .grid-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
+  .grid-item:hover img { transform: scale(1.04); }
+
+  .grid-item .overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.85) 100%);
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 6px;
+  }
+  .overlay-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 4px;
+  }
+  .source-badge {
+    font-size: 8px; background: rgba(255,0,0,0.85); color: #fff;
+    padding: 2px 5px; border-radius: 3px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+    backdrop-filter: blur(4px);
+  }
+  .duration-badge {
+    font-size: 10px; background: rgba(0,0,0,0.75); color: #fff;
+    padding: 2px 5px; border-radius: 3px;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+  }
+  .delete-btn {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: none; background: rgba(0,0,0,0.6); color: #fff;
+    font-size: 10px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: all 0.15s;
+    backdrop-filter: blur(4px);
+  }
+  .grid-item:hover .delete-btn { opacity: 1; }
+  .delete-btn:hover { background: #FF0000; }
+
+  .overlay-bottom { opacity: 0; transition: opacity 0.15s; }
+  .grid-item:hover .overlay-bottom { opacity: 1; }
+  .overlay-bottom .title {
+    font-size: 10px; font-weight: 600; color: #fff;
+    overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .overlay-bottom .channel {
+    font-size: 9px; color: rgba(255,255,255,0.8); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .empty {
+    text-align: center; padding: 60px 20px; color: #aaa;
+    grid-column: 1 / -1;
+  }
+  .empty h2 { font-size: 14px; color: #f1f1f1; margin-bottom: 4px; font-weight: 600; }
+  .empty p { font-size: 12px; line-height: 1.5; }
+
+  .footer {
+    border-top: 1px solid #303030; background: #212121;
+    padding: 7px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: #aaa; flex-shrink: 0;
+  }
+  .footer-links { display: flex; gap: 10px; }
+  .footer a { color: #aaa; text-decoration: none; }
+  .footer a:hover { color: #f1f1f1; text-decoration: underline; }
+  .footer .version {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px; letter-spacing: 0.3px;
+  }
+
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb { background: #303030; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-top">
+      <div class="brand">
+        <h1>Watch History</h1>
+        <div class="stats" id="stats">Loading...</div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="exportBtn" title="Export as JSON">&#x2B07;</button>
+        <button class="icon-btn danger" id="clearBtn" title="Clear all history">&#x1F5D1;</button>
+      </div>
+    </div>
+    <div class="controls">
+      <input type="text" class="search-bar" id="searchInput" placeholder="Search title, channel...">
+    </div>
+    <div class="filter-pills">
+      <button class="pill active" data-filter="all">All</button>
+      <button class="pill" data-filter="home">Home</button>
+      <button class="pill" data-filter="search">Search</button>
+      <button class="pill" data-filter="channel">Channel</button>
+      <button class="pill" data-filter="watch-next">Watch-next</button>
+      <button class="pill" data-filter="shorts">Shorts</button>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-links">
+      <a href="https://mevfiew.github.io/youtube-view-history/privacy-policy.html" target="_blank" rel="noopener">Privacy</a>
+      <a href="https://github.com/mevfiew/youtube-view-history/issues/new" target="_blank" rel="noopener">Report issue</a>
+    </div>
+    <span class="version">v1.0.0</span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
