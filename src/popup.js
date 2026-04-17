@@ -76,7 +76,8 @@ function createGridItem(entry) {
     img.src = safeThumb;
     img.alt = '';
     img.loading = 'lazy';
-    img.referrerPolicy = 'no-referrer';
+    // Note: no referrerPolicy — YouTube's i.ytimg.com checks the Referer
+    // header and returns an error page for bare fetches without one.
     link.appendChild(img);
   }
 
