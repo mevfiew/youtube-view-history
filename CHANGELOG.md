@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] — 2026-04-17
+
+### Fixed
+- Swallow the "Extension context invalidated" error that the injector used to throw in old YouTube tabs after the extension was reloaded or updated. `chrome.runtime.sendMessage` throws synchronously once the context is dead, so a promise `.catch` is not enough — the injector now checks `chrome.runtime?.id` first and wraps the call in a try/catch.
+
 ## [1.0.3] — 2026-04-17
 
 ### Fixed
@@ -35,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supports four renderer shapes observed in real YouTube responses: `videoRenderer`, `gridVideoRenderer`, `lockupViewModel` (new watch-next shape), and `shortsLockupViewModel`.
 - MV3 manifest with zero outbound network requests and no remote code.
 
+[1.0.4]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.4
 [1.0.3]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.3
 [1.0.2]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.2
 [1.0.1]: https://github.com/mevfiew/youtube-view-history/releases/tag/v1.0.1
