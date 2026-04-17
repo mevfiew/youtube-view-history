@@ -16,21 +16,57 @@ function reportFromInitialData() {
   } catch {}
 }
 
-// Run once as soon as script executes (DOM-ready check).
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', reportFromInitialData, { once: true });
-} else {
+function reportCurrentShortFromUrl() {
+  try {
+    const m = location.href.match(/\/shorts\/([a-zA-Z0-9_-]{11})/);
+    if (!m) return;
+    const videoId = m[1];
+    const title = document.title.replace(/\s*-\s*YouTube\s*$/, '').trim();
+    if (!title) return;
+    const entry = {
+      videoId,
+      kind: 'short',
+      title,
+      channelName: '',
+      channelHandle: '',
+      channelId: '',
+      thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+      durationText: '',
+      durationSec: 0,
+      viewCountText: '',
+      publishedText: '',
+      url: `https://www.youtube.com/shorts/${videoId}`,
+      source: 'shorts',
+      viewedAt: Date.now()
+    };
+    window.postMessage({ type: MSG_TYPE, entries: [entry] }, '*');
+  } catch {}
+}
+
+function reportCurrentPageVideo() {
+  if (location.pathname.startsWith('/shorts/')) {
+    reportCurrentShortFromUrl();
+    return;
+  }
   reportFromInitialData();
 }
 
-// Also re-scan on SPA navigation (YouTube swaps ytInitialData without reload).
+// Run once as soon as script executes (DOM-ready check).
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', reportCurrentPageVideo, { once: true });
+} else {
+  reportCurrentPageVideo();
+}
+
+// Re-scan on SPA navigation (YouTube swaps URL + ytInitialData without full reload).
 let lastUrl = location.href;
 const navTimer = setInterval(() => {
   if (location.href !== lastUrl) {
     lastUrl = location.href;
-    setTimeout(reportFromInitialData, 500);
+    // Title update can lag the URL change slightly — give it a moment.
+    setTimeout(reportCurrentPageVideo, 600);
   }
-}, 1000);
+}, 500);
 
 // Fetch hook for continuation / API-driven responses.
 const originalFetch = window.fetch;

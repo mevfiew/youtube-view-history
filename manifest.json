@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Watch History Pro",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Automatically logs every YouTube video you see in your feed, search, channels, and Shorts. 100% local, no tracking.",
   "permissions": ["storage"],
   "host_permissions": ["https://*.youtube.com/*", "https://*.youtu.be/*"],
